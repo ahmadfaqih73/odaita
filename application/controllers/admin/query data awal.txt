@@ -1,0 +1,38 @@
+SELECT
+ka.variabel,CASE WHEN ka.variabel ='Persepsi' THEN SUM(per.avr) / count(per.avr) ELSE SUM(har.avr) / count(har.avr) END as nil
+
+FROM
+tb_keanggotaan ka 
+LEFT OUTER JOIN
+(
+SELECT
+a.jenis as jns,SUM(b.skor) / COUNT(b.skor) as avr
+FROM
+kuisioner a
+INNER JOIN kepuasan b ON b.kepuasan = a.kepuasan
+
+WHERE a.code_quisioner = '1275' AND a.jenis = 'Persepsi'
+
+GROUP BY a.id_dimensi
+    )per  ON per.jns = ka.variabel
+    
+    
+LEFT OUTER JOIN
+(
+SELECT
+a.jenis as jns,SUM(b.skor) / COUNT(b.skor) as avr
+FROM
+kuisioner a
+INNER JOIN kepuasan b ON b.kepuasan = a.kepuasan
+
+WHERE a.code_quisioner = '1275' AND a.jenis = 'Harapan'
+
+GROUP BY a.id_dimensi
+    )har  ON har.jns = ka.variabel
+    
+    
+    
+    
+WHERE ka.tipe = 'Input'
+GROUP BY ka.variabel
+    
